@@ -75,8 +75,10 @@
 		public function ResumeVideo() {
 			ns.resume(); 
 		}
+		
 
 		private function remove(e) {
+			trace("remove moive");
 			ns.close();
 		}
 		
