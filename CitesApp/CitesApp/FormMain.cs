@@ -59,6 +59,11 @@ namespace CitesApp
                 }
 
             }
+            if (e.command == "b3_search")
+            {
+                string sqlKeyword = e.args;
+            }
+            
         }
 
     }
