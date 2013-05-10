@@ -62,6 +62,9 @@ namespace CitesApp
             if (e.command == "b3_search")
             {
                 string sqlKeyword = e.args;
+
+                string str = "<invoke name=\"ShowSearchResultData\" returntype=\"xml\"><arguments> <string>Helloworld</string> </arguments></invoke>";
+                axShockwaveFlash1.CallFunction(str);
             }
             
         }
