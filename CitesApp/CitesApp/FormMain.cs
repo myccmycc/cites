@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using System.Xml;
+using System.IO;
 
 namespace CitesApp
 {
@@ -63,11 +65,108 @@ namespace CitesApp
             {
                 string sqlKeyword = e.args;
 
-                string str = "<invoke name=\"ShowSearchResultData\" returntype=\"xml\"><arguments> <string>Helloworld</string> </arguments></invoke>";
+              //  string str = "<invoke name='ShowSearchResultData' returntype='xml'><arguments> <string>Helloworld</string> </arguments></invoke>";
+                string str = EncodeXML("ShowSearchResultData","string name_cn","string name_latin","string name_en","string name_alias"
+							 ,"string _phylum","string _class","string _order","string _family",
+							 "string _information","string _cites_level","string _country_level");
                 axShockwaveFlash1.CallFunction(str);
             }
             
         }
+
+        private string EncodeXML(string funName,string name_cn,string name_latin,string name_en,string name_alias
+							 ,string _phylum,string _class,string _order,string _family,
+							 string _information,string _cites_level,string _country_level)
+        {
+
+            StringBuilder sb = new StringBuilder();
+
+            XmlTextWriter xw = new XmlTextWriter(new StringWriter(sb));
+
+
+
+            xw.WriteStartElement("invoke");
+
+            xw.WriteAttributeString("name", funName);
+
+            xw.WriteAttributeString("returntype", "xml");
+
+
+
+            //---------参数-----------------
+            xw.WriteStartElement("arguments");
+
+            //---------name_cn-----------------------
+            xw.WriteStartElement("string");
+            xw.WriteString(name_cn);
+            xw.WriteEndElement();
+
+            //--------name_latin---------------------
+            xw.WriteStartElement("string");
+            xw.WriteString(name_latin);
+            xw.WriteEndElement();
+
+            //--------name_en---------------------
+            xw.WriteStartElement("string");
+            xw.WriteString(name_en);
+            xw.WriteEndElement();
+
+            //--------name_alias---------------------
+            xw.WriteStartElement("string");
+            xw.WriteString(name_alias);
+            xw.WriteEndElement();
+
+            //--------_phylum---------------------
+            xw.WriteStartElement("string");
+            xw.WriteString(_phylum);
+            xw.WriteEndElement();
+
+            //--------_class---------------------
+            xw.WriteStartElement("string");
+            xw.WriteString(_class);
+            xw.WriteEndElement();
+
+            //--------_order---------------------
+            xw.WriteStartElement("string");
+            xw.WriteString(_order);
+            xw.WriteEndElement();
+
+            //--------_family---------------------
+            xw.WriteStartElement("string");
+            xw.WriteString(_family);
+            xw.WriteEndElement();
+
+            //--------_information---------------------
+            xw.WriteStartElement("string");
+            xw.WriteString(_information);
+            xw.WriteEndElement();
+
+            //--------_cites_level---------------------
+            xw.WriteStartElement("string");
+            xw.WriteString(_cites_level);
+            xw.WriteEndElement();
+
+            //--------_country_level---------------------
+            xw.WriteStartElement("string");
+            xw.WriteString(_country_level);
+            xw.WriteEndElement();
+
+            xw.WriteEndElement();
+
+            xw.WriteEndElement();
+
+
+
+            xw.Flush();
+
+            xw.Close();
+
+
+
+            return sb.ToString();
+
+        } 
+
 
     }
 }
