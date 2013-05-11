@@ -9,6 +9,8 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using System.Xml;
 using System.IO;
+using MySql.Data;
+using MySql.Data.MySqlClient;
 
 namespace CitesApp
 {
@@ -63,13 +65,20 @@ namespace CitesApp
             }
             if (e.command == "b3_search")
             {
-                string sqlKeyword = e.args;
+                string sqlKeyword = e.args.Trim();
+                string sqlStr = "select * from cites_animal where name_latin like '%" + sqlKeyword + "%' || name_cn like '%" + sqlKeyword + "%' || name_en like '%" + sqlKeyword + "%' || name_alias like '%"+ sqlKeyword + "%'";
 
-              //  string str = "<invoke name='ShowSearchResultData' returntype='xml'><arguments> <string>Helloworld</string> </arguments></invoke>";
-                string str = EncodeXML("ShowSearchResultData","string name_cn","string name_latin","string name_en","string name_alias"
-							 ,"string _phylum","string _class","string _order","string _family",
-							 "string _information","string _cites_level","string _country_level");
-                axShockwaveFlash1.CallFunction(str);
+                MySqlDataReader myRead = MySqlHelper.ExecuteReader(MySqlHelper.Conn, CommandType.Text, sqlStr, null);
+
+                if (myRead.Read())
+                {
+                    //MessageBox.Show(myRead["name_cn"].ToString());
+                    // string str = "<invoke name='ShowSearchResultData' returntype='xml'><arguments> <string>Helloworld</string> </arguments></invoke>";
+                    string str = EncodeXML("ShowSearchResultData", myRead["name_cn"].ToString(), myRead["name_latin"].ToString(), myRead["name_en"].ToString(),  myRead["name_alias"].ToString()
+                                 , myRead["cites_phylum"].ToString(), myRead["cites_class"].ToString(),myRead["cites_order"].ToString(),myRead["cites_family"].ToString(),
+                                 myRead["information"].ToString(), myRead["cites_level"].ToString(),myRead["country_level"].ToString());
+                    axShockwaveFlash1.CallFunction(str);
+                }
             }
             
         }

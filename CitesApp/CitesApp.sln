@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CitesApp", "CitesApp\CitesA
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KeyboardCtrl_V3", "KeyboardCtrl_V4\KeyboardCtrl_V3\KeyboardCtrl_V3.csproj", "{742338F2-EF8D-4114-8FC9-443BAAE8A7B9}"
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "CitesAppSetup", "CitesAppSetup\CitesAppSetup.vdproj", "{9904598A-2186-4C32-A059-E14939052FC3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +37,12 @@ Global
 		{742338F2-EF8D-4114-8FC9-443BAAE8A7B9}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{742338F2-EF8D-4114-8FC9-443BAAE8A7B9}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{742338F2-EF8D-4114-8FC9-443BAAE8A7B9}.Release|x86.ActiveCfg = Release|Any CPU
+		{9904598A-2186-4C32-A059-E14939052FC3}.Debug|Any CPU.ActiveCfg = Debug
+		{9904598A-2186-4C32-A059-E14939052FC3}.Debug|Mixed Platforms.ActiveCfg = Debug
+		{9904598A-2186-4C32-A059-E14939052FC3}.Debug|x86.ActiveCfg = Debug
+		{9904598A-2186-4C32-A059-E14939052FC3}.Release|Any CPU.ActiveCfg = Release
+		{9904598A-2186-4C32-A059-E14939052FC3}.Release|Mixed Platforms.ActiveCfg = Release
+		{9904598A-2186-4C32-A059-E14939052FC3}.Release|x86.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
