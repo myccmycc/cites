@@ -34,8 +34,8 @@
 				ns.client = clientobj;
 				video = new Video();
 				video.attachNetStream(ns);
-				video.width = 800;
-				video.height = 600;
+				video.width = 1920;
+				video.height = 1080;
 				ns.bufferTime=3;
 			}
 		}
