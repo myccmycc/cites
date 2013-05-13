@@ -179,3 +179,16 @@ namespace CitesApp
 
     }
 }
+
+/*
+    Process.Start(@"C:\Program Files\Common Files\Microsoft Shared\ink\TabTip.exe");
+
+    Process[] myprocess = Process.GetProcessesByName("TabTip");
+    MessageBox.Show(myprocess.Length.ToString());
+    if (myprocess.Length > 0)
+    {
+        myprocess[0].Kill();
+        //myprocess[0].CloseMainWindow();
+        //myprocess[0].Close();
+    }
+*/
