@@ -12,11 +12,15 @@ using System.IO;
 using MySql.Data;
 using MySql.Data.MySqlClient;
 
+using System.Diagnostics;
+
 namespace CitesApp
 {
     public partial class FormMain : Form
     {
-        private KeyboardCtrl_V3.KeyboardCtrl keyboardCtrl1;
+#if MY_KEYBOARD
+    private KeyboardCtrl_V3.KeyboardCtrl keyboardCtrl1;
+#endif
 
         public FormMain()
         {
@@ -34,7 +38,7 @@ namespace CitesApp
             axShockwaveFlash1.Size = new Size(screenRect.Width,screenRect.Height);
 
             axShockwaveFlash1.Movie = Application.StartupPath + "\\CitesAppFlash_v2.swf";
-
+#if MY_KEYBOARD
             //===========step2:建立Keyboard实例================//
             this.keyboardCtrl1 = new KeyboardCtrl_V3.KeyboardCtrl();
             this.keyboardCtrl1.Location = new System.Drawing.Point(screenRect.Width / 2 - keyboardCtrl1.Width / 2, screenRect.Height);
@@ -43,24 +47,52 @@ namespace CitesApp
             this.keyboardCtrl1.TabIndex = 3;
             this.Controls.Add(this.keyboardCtrl1);
             keyboardCtrl1.BringToFront();
-
+#endif
            
         }
 
         //和flash通信
         private void axShockwaveFlash1_FSCommand(object sender, AxShockwaveFlashObjects._IShockwaveFlashEvents_FSCommandEvent e)
         {
+              if (e.command == "show_inputtext")
+            {
+                string args = e.args;
+               // MessageBox.Show(args);
+                int a = args.IndexOf(':');
+                string x = args.Substring(0,a);
+                string y=args.Substring(a+1);
+
+                int result1 = int.Parse(x);
+                 int result2 = int.Parse(y);
+         
+                  textBox1.Location = new Point(result1, result2);
+            }
+
             if (e.command == "keyboard")
             {
+#if MY_KEYBOARD
                 if (e.args == "show" && keyboardCtrl1.IsShow==false)
                 {
-
                     keyboardCtrl1.ShowKeyBoard(true);
                 }
                 else if (e.args == "hide" && keyboardCtrl1.IsShow == true)
                 {
                     keyboardCtrl1.ShowKeyBoard(false);
                 }
+#else
+                if (e.args == "show")
+                {
+                    Process.Start(@"C:\Program Files\Common Files\Microsoft Shared\ink\TabTip.exe");
+                }
+                else if (e.args == "hide")
+                {
+                    Process[] myprocess = Process.GetProcessesByName("TabTip");
+                    if (myprocess.Length > 0)
+                    {
+                        myprocess[0].Kill();
+                    }
+                }
+#endif
 
             }
             if (e.command == "b3_search")
@@ -91,8 +123,6 @@ namespace CitesApp
             StringBuilder sb = new StringBuilder();
 
             XmlTextWriter xw = new XmlTextWriter(new StringWriter(sb));
-
-
 
             xw.WriteStartElement("invoke");
 
@@ -170,25 +200,8 @@ namespace CitesApp
 
             xw.Close();
 
-
-
             return sb.ToString();
 
         } 
-
-
     }
 }
-
-/*
-    Process.Start(@"C:\Program Files\Common Files\Microsoft Shared\ink\TabTip.exe");
-
-    Process[] myprocess = Process.GetProcessesByName("TabTip");
-    MessageBox.Show(myprocess.Length.ToString());
-    if (myprocess.Length > 0)
-    {
-        myprocess[0].Kill();
-        //myprocess[0].CloseMainWindow();
-        //myprocess[0].Close();
-    }
-*/
