@@ -47,7 +47,7 @@
 			if (e.info.code == "NetStream.Play.Stop") {
 				ns.seek(0);
 				ns.pause(); 
-				MovieClip(this.root).EndPlayVideo();
+				MovieClip(this.parent).EndPlayVideo();
 			}
 
 		}
@@ -59,7 +59,7 @@
 			ns.play(str);
 			ns.seek(0);
 			//ns.pause(); 
-			trace("bo fang");
+			trace("mv控件 视频开始播放");
 		}
 		//播放某个视频，mvd控件开始执行
 		public function ShowVideo(st:String ) {

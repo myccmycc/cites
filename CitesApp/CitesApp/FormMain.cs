@@ -54,19 +54,25 @@ namespace CitesApp
         //和flash通信
         private void axShockwaveFlash1_FSCommand(object sender, AxShockwaveFlashObjects._IShockwaveFlashEvents_FSCommandEvent e)
         {
-              if (e.command == "show_inputtext")
+             if (e.command == "show_inputtext")
             {
                 string args = e.args;
-               // MessageBox.Show(args);
                 int a = args.IndexOf(':');
                 string x = args.Substring(0,a);
                 string y=args.Substring(a+1);
 
                 int result1 = int.Parse(x);
-                 int result2 = int.Parse(y);
-         
-                  textBox1.Location = new Point(result1, result2);
+                int result2 = int.Parse(y);
+                textBox1.Visible = true;
+                textBox1.Text = "物种名";
+                textBox1.Location = new Point(result1, result2);
             }
+             else if (e.command == "hide_inputtext")
+            {
+                textBox1.Visible = false;
+             
+            }
+
 
             if (e.command == "keyboard")
             {
@@ -82,6 +88,12 @@ namespace CitesApp
 #else
                 if (e.args == "show")
                 {
+                    Process[] myprocess = Process.GetProcessesByName("TabTip");
+                    if (myprocess.Length > 0)
+                    {
+                        myprocess[0].Kill();
+                    }
+
                     Process.Start(@"C:\Program Files\Common Files\Microsoft Shared\ink\TabTip.exe");
                 }
                 else if (e.args == "hide")
@@ -202,6 +214,19 @@ namespace CitesApp
 
             return sb.ToString();
 
+        }
+
+        private void textBox1_MouseDown(object sender, MouseEventArgs e)
+        {
+            textBox1.Text = "";
+
+            Process[] myprocess = Process.GetProcessesByName("TabTip");
+            if (myprocess.Length > 0)
+            {
+                myprocess[0].Kill();
+            }
+
+            Process.Start(@"C:\Program Files\Common Files\Microsoft Shared\ink\TabTip.exe");
         } 
     }
 }
