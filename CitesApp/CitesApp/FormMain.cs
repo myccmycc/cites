@@ -70,7 +70,6 @@ namespace CitesApp
              else if (e.command == "hide_inputtext")
             {
                 textBox1.Visible = false;
-             
             }
 
 
@@ -88,29 +87,46 @@ namespace CitesApp
 #else
                 if (e.args == "show")
                 {
-                    Process[] myprocess = Process.GetProcessesByName("TabTip");
+                   /* Process[] myprocess = Process.GetProcessesByName("TabTip");
                     if (myprocess.Length > 0)
                     {
                         myprocess[0].Kill();
                     }
 
-                    Process.Start(@"C:\Program Files\Common Files\Microsoft Shared\ink\TabTip.exe");
+                    Process.Start(@"C:\Program Files\Common Files\Microsoft Shared\ink\TabTip.exe");*/
                 }
                 else if (e.args == "hide")
                 {
-                    Process[] myprocess = Process.GetProcessesByName("TabTip");
+                   /* Process[] myprocess = Process.GetProcessesByName("TabTip");
                     if (myprocess.Length > 0)
                     {
                         myprocess[0].Kill();
-                    }
+                    }*/
                 }
 #endif
 
             }
+            if (e.command == "b3_search_name")
+            {
+                //string sqlKeyword = e.args.Trim();
+                string sqlKeyword = textBox1.Text;
+                string sqlStr = "select * from cites_animal where name_latin like '%" + sqlKeyword + "%' || name_cn like '%" + sqlKeyword + "%' || name_en like '%" + sqlKeyword + "%' || name_alias like '%"+ sqlKeyword + "%'";
+
+                MySqlDataReader myRead = MySqlHelper.ExecuteReader(MySqlHelper.Conn, CommandType.Text, sqlStr, null);
+
+                while (myRead.Read())
+                {
+                    string str2 = EncodeXMLNameCn("ShowResultList",myRead["name_cn"].ToString());
+                    axShockwaveFlash1.CallFunction(str2);
+                }
+                myRead.Close();
+            }
+
             if (e.command == "b3_search")
             {
-                string sqlKeyword = e.args.Trim();
-                string sqlStr = "select * from cites_animal where name_latin like '%" + sqlKeyword + "%' || name_cn like '%" + sqlKeyword + "%' || name_en like '%" + sqlKeyword + "%' || name_alias like '%"+ sqlKeyword + "%'";
+               // string sqlKeyword = e.args.Trim();
+                string sqlKeyword = textBox1.Text;
+                string sqlStr = "select * from cites_animal where name_latin like '%" + sqlKeyword + "%' || name_cn like '%" + sqlKeyword + "%' || name_en like '%" + sqlKeyword + "%' || name_alias like '%" + sqlKeyword + "%'";
 
                 MySqlDataReader myRead = MySqlHelper.ExecuteReader(MySqlHelper.Conn, CommandType.Text, sqlStr, null);
 
@@ -118,11 +134,12 @@ namespace CitesApp
                 {
                     //MessageBox.Show(myRead["name_cn"].ToString());
                     // string str = "<invoke name='ShowSearchResultData' returntype='xml'><arguments> <string>Helloworld</string> </arguments></invoke>";
-                    string str = EncodeXML("ShowSearchResultData", myRead["name_cn"].ToString(), myRead["name_latin"].ToString(), myRead["name_en"].ToString(),  myRead["name_alias"].ToString()
-                                 , myRead["cites_phylum"].ToString(), myRead["cites_class"].ToString(),myRead["cites_order"].ToString(),myRead["cites_family"].ToString(),
-                                 myRead["information"].ToString(), myRead["cites_level"].ToString(),myRead["country_level"].ToString());
+                    string str = EncodeXML("ShowSearchResultData", myRead["name_cn"].ToString(), myRead["name_latin"].ToString(), myRead["name_en"].ToString(), myRead["name_alias"].ToString()
+                                 , myRead["cites_phylum"].ToString(), myRead["cites_class"].ToString(), myRead["cites_order"].ToString(), myRead["cites_family"].ToString(),
+                                 myRead["information"].ToString(), myRead["cites_level"].ToString(), myRead["country_level"].ToString());
                     axShockwaveFlash1.CallFunction(str);
                 }
+                myRead.Close();
             }
             
         }
@@ -216,16 +233,54 @@ namespace CitesApp
 
         }
 
+        private string EncodeXMLNameCn(string funName, string name_cn)
+        {
+
+            StringBuilder sb = new StringBuilder();
+
+            XmlTextWriter xw = new XmlTextWriter(new StringWriter(sb));
+
+
+            xw.WriteStartElement("invoke");
+
+            xw.WriteAttributeString("name", funName);
+
+            xw.WriteAttributeString("returntype", "xml");
+
+
+
+            //---------参数-----------------
+            xw.WriteStartElement("arguments");
+
+            //---------name_cn-----------------------
+            xw.WriteStartElement("string");
+            xw.WriteString(name_cn);
+            xw.WriteEndElement();
+            //---------name_cn-----------------------
+
+            xw.WriteEndElement();
+            //---------参数-----------------
+
+            xw.WriteEndElement();
+
+
+            xw.Flush();
+
+            xw.Close();
+
+            return sb.ToString();
+
+        }
+
         private void textBox1_MouseDown(object sender, MouseEventArgs e)
         {
             textBox1.Text = "";
 
-            Process[] myprocess = Process.GetProcessesByName("TabTip");
+           /* Process[] myprocess = Process.GetProcessesByName("TabTip");
             if (myprocess.Length > 0)
             {
                 myprocess[0].Kill();
-            }
-
+            }*/
             Process.Start(@"C:\Program Files\Common Files\Microsoft Shared\ink\TabTip.exe");
         } 
     }
