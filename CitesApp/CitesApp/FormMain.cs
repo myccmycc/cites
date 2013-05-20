@@ -64,7 +64,7 @@ namespace CitesApp
                 int result1 = int.Parse(x);
                 int result2 = int.Parse(y);
                 textBox1.Visible = true;
-                textBox1.Text = "物种名";
+                textBox1.Text = "";
                 textBox1.Location = new Point(result1, result2);
             }
              else if (e.command == "hide_inputtext")
@@ -159,6 +159,14 @@ namespace CitesApp
                     axShockwaveFlash1.CallFunction(str);
                 }
                 myRead.Close();
+            }
+
+            if (e.command == "b7_search_question")
+            {
+                //显示搜索到的记录
+                string sqlKeyword = textBox1.Text;
+                string str2 = EncodeXMLNameCn("SearchQuestion", sqlKeyword);
+                axShockwaveFlash1.CallFunction(str2);
             }
             
         }
