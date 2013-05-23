@@ -76,6 +76,10 @@ namespace CitesApp
                  string sqlKeyword = textBox1.Text;
                  string sqlStr = "select * from cites_animal where name_latin like '%" + sqlKeyword + "%' || name_cn like '%" + sqlKeyword + "%' || name_en like '%" + sqlKeyword + "%' || name_alias like '%" + sqlKeyword + "%'";
 
+                 string str2 = EncodeXMLNameCn("ReSearchHSCode", "df");
+                 dataGridView1.Visible = true;
+                 dataGridView1.DataSource = MySqlHelper.GetDataSet(MySqlHelper.Conn, CommandType.Text, "select * from cites_animal", null).Tables[0].DefaultView;
+                 axShockwaveFlash1.CallFunction(str2);
                 /* MySqlDataReader myRead = MySqlHelper.ExecuteReader(MySqlHelper.Conn, CommandType.Text, sqlStr, null);
 
                  if (myRead.Read())
