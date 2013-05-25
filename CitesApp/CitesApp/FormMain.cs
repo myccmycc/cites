@@ -64,36 +64,67 @@ namespace CitesApp
                 int result1 = int.Parse(x);
                 int result2 = int.Parse(y);
                 textBox1.Visible = true;
-                textBox1.Text = "";
+                //textBox1.Text = "";
                 textBox1.Location = new Point(result1, result2);
             }
              else if (e.command == "hide_inputtext")
             {
                 textBox1.Visible = false;
             }
-             if (e.command == "b5_search")
+
+             if (e.command == "hide_Text_GridView")
+             {
+                 textBox1.Visible = false;
+                 dataGridView1.Visible = false;
+             }
+
+             if (e.command == "show_Text_GridView")
+             {
+                 textBox1.Visible = true;
+                 dataGridView1.Visible = true;
+             }
+             if (e.command == "b5_search" || e.command == "b5_search_2")
              {
                  string sqlKeyword = textBox1.Text;
-                 string sqlStr = "select * from cites_animal where name_latin like '%" + sqlKeyword + "%' || name_cn like '%" + sqlKeyword + "%' || name_en like '%" + sqlKeyword + "%' || name_alias like '%" + sqlKeyword + "%'";
+                 if (sqlKeyword == "")
+                     return;
+                 //1.物种信息显示
+                 string sqlStr1 = "select * from cites_table where name_latin like '%" + sqlKeyword + "%' || name_cn like '%" + sqlKeyword + "%' || name_en like '%" + sqlKeyword + "%' || name_alias like '%" + sqlKeyword + "%'";
 
-                 string str2 = EncodeXMLNameCn("ReSearchHSCode", "df");
-                 dataGridView1.Visible = true;
-                 dataGridView1.DataSource = MySqlHelper.GetDataSet(MySqlHelper.Conn, CommandType.Text, "select * from cites_animal", null).Tables[0].DefaultView;
-                 axShockwaveFlash1.CallFunction(str2);
-                /* MySqlDataReader myRead = MySqlHelper.ExecuteReader(MySqlHelper.Conn, CommandType.Text, sqlStr, null);
+                 MySqlDataReader myRead = MySqlHelper.ExecuteReader(MySqlHelper.Conn, CommandType.Text, sqlStr1, null);
 
                  if (myRead.Read())
                  {
-                     //MessageBox.Show(myRead["name_cn"].ToString());
-                     // string str = "<invoke name='ShowSearchResultData' returntype='xml'><arguments> <string>Helloworld</string> </arguments></invoke>";
-                     string str = EncodeXML("ShowSearchResultData", myRead["name_cn"].ToString(), myRead["name_latin"].ToString(), myRead["name_en"].ToString(), myRead["name_alias"].ToString()
-                                  , myRead["cites_phylum"].ToString(), myRead["cites_class"].ToString(), myRead["cites_order"].ToString(), myRead["cites_family"].ToString(),
-                                  myRead["information"].ToString(), myRead["cites_level"].ToString(), myRead["country_level"].ToString());
+                     //显示搜索到的记录
+                     string str = EncodeXMLB5("ReSearchHSCode", myRead["name_cn"].ToString(), myRead["name_latin"].ToString(), myRead["name_en"].ToString(), myRead["name_alias"].ToString(),
+                                 myRead["cites_level"].ToString(), myRead["country_level"].ToString(), myRead["product_table"].ToString());
                      axShockwaveFlash1.CallFunction(str);
                  }
-                 myRead.Close();*/
- 
+                 myRead.Close();
+
+                 //2.hs编码数据
+                 string sqlStr = "select * from cites_productid  where ProductTable in ( select product_table from cites_table where  name_latin like '%" + sqlKeyword + "%' || name_cn like '%" + sqlKeyword + "%' || name_en like '%" + sqlKeyword + "%' || name_alias like '%" + sqlKeyword + "%')";
+
+                 dataGridView1.Visible = true;
+                 dataGridView1.DataSource = MySqlHelper.GetDataSet(MySqlHelper.Conn, CommandType.Text, sqlStr, null).Tables[0].DefaultView;
+
+                 dataGridView1.Columns[0].HeaderCell.Value = "商品编号";
+                 dataGridView1.Columns[1].HeaderCell.Value = "商品名称";
+                 dataGridView1.Columns[2].HeaderCell.Value = "监管条件";
+                 dataGridView1.Columns[3].HeaderCell.Value = "说明";
+
+                 dataGridView1.Columns[0].Width = 100;
+                 dataGridView1.Columns[1].Width = 250;
+                 dataGridView1.Columns[2].Width = 100;
+                 dataGridView1.Columns[3].Width = 250;
+
+                 dataGridView1.Columns[4].Visible = false;
+                 dataGridView1.Columns[5].Visible = false;
              }
+             if (e.command == "b5_GridView1_show")
+                 dataGridView1.Visible = true;
+             if (e.command == "b5_GridView1_hide")
+                 dataGridView1.Visible = false;
 
 
             if (e.command == "keyboard")
@@ -301,6 +332,72 @@ namespace CitesApp
 
             return sb.ToString();
 
+        }
+
+        private string EncodeXMLB5(string funName, string name_cn,string name_latin,string name_en,string name_alias
+                             , string _cites_level, string _country_level, string product_table)
+        {
+             StringBuilder sb = new StringBuilder();
+
+            XmlTextWriter xw = new XmlTextWriter(new StringWriter(sb));
+
+            xw.WriteStartElement("invoke");
+
+            xw.WriteAttributeString("name", funName);
+
+            xw.WriteAttributeString("returntype", "xml");
+
+
+
+            //---------参数-----------------
+            xw.WriteStartElement("arguments");
+
+            //---------name_cn-----------------------
+            xw.WriteStartElement("string");
+            xw.WriteString(name_cn);
+            xw.WriteEndElement();
+
+            //--------name_latin---------------------
+            xw.WriteStartElement("string");
+            xw.WriteString(name_latin);
+            xw.WriteEndElement();
+
+            //--------name_en---------------------
+            xw.WriteStartElement("string");
+            xw.WriteString(name_en);
+            xw.WriteEndElement();
+
+            //--------name_alias---------------------
+            xw.WriteStartElement("string");
+            xw.WriteString(name_alias);
+            xw.WriteEndElement();
+
+            //--------_cites_level---------------------
+            xw.WriteStartElement("string");
+            xw.WriteString(_cites_level);
+            xw.WriteEndElement();
+
+            //--------_country_level---------------------
+            xw.WriteStartElement("string");
+            xw.WriteString(_country_level);
+            xw.WriteEndElement();
+
+            //--------table_id---------------------
+            xw.WriteStartElement("string");
+            xw.WriteString(product_table);
+            xw.WriteEndElement();
+
+            xw.WriteEndElement();
+
+            xw.WriteEndElement();
+
+
+
+            xw.Flush();
+
+            xw.Close();
+
+            return sb.ToString();
         }
 
         private void textBox1_MouseDown(object sender, MouseEventArgs e)
