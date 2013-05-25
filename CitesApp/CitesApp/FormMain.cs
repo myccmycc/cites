@@ -165,32 +165,55 @@ namespace CitesApp
                 string sqlKeyword = textBox1.Text;
                 string sqlStr = "select * from cites_animal where name_latin like '%" + sqlKeyword + "%' || name_cn like '%" + sqlKeyword + "%' || name_en like '%" + sqlKeyword + "%' || name_alias like '%"+ sqlKeyword + "%'";
 
-                MySqlDataReader myRead = MySqlHelper.ExecuteReader(MySqlHelper.Conn, CommandType.Text, sqlStr, null);
-
-                while (myRead.Read())
+                DataSet ds= MySqlHelper.GetDataSet(MySqlHelper.Conn, CommandType.Text, sqlStr, null);
+                if (ds.Tables[0].Rows.Count == 1)
                 {
-                    //显示搜索到的记录
-                    string str2 = EncodeXMLNameCn("ShowResultList",myRead["name_cn"].ToString());
-                    axShockwaveFlash1.CallFunction(str2);
+                    string name_cn = ds.Tables[0].Rows[0]["name_cn"].ToString();
+                    string name_latin = ds.Tables[0].Rows[0]["name_latin"].ToString();
+                    string name_en = ds.Tables[0].Rows[0]["name_en"].ToString();
+                    string name_alias = ds.Tables[0].Rows[0]["name_alias"].ToString();
+
+
+                    string cites_phylum = ds.Tables[0].Rows[0]["cites_phylum"].ToString();
+                    string cites_class = ds.Tables[0].Rows[0]["cites_class"].ToString();
+                    string cites_order = ds.Tables[0].Rows[0]["cites_order"].ToString();
+                    string cites_family = ds.Tables[0].Rows[0]["cites_family"].ToString();
+                    string information = ds.Tables[0].Rows[0]["information"].ToString();
+                    string cites_level = ds.Tables[0].Rows[0]["cites_level"].ToString();
+
+                    string country_level = ds.Tables[0].Rows[0]["country_level"].ToString();
+                    string is_animal = ds.Tables[0].Rows[0]["is_animal"].ToString();
+
+                    string str = EncodeXML("ShowSearchResultData",name_cn, name_latin,name_en, name_alias,cites_phylum, cites_class, cites_order, cites_family,
+                                    information, cites_level, country_level, is_animal);
+                    axShockwaveFlash1.CallFunction(str);
                 }
-                myRead.Close();
+
+                else if (ds.Tables[0].Rows.Count > 1)
+                {
+                    foreach (DataRow myRead in ds.Tables[0].Rows)
+                    {
+                        //显示搜索到的记录
+                        string str2 = EncodeXMLNameCn("ShowResultList", myRead["name_cn"].ToString(), myRead["name_latin"].ToString());
+                        axShockwaveFlash1.CallFunction(str2);
+                    }
+
+                }
+
             }
 
             if (e.command == "b3_search")
             {
-               // string sqlKeyword = e.args.Trim();
-                string sqlKeyword = textBox1.Text;
+                string sqlKeyword = e.args.Trim();
                 string sqlStr = "select * from cites_animal where name_latin like '%" + sqlKeyword + "%' || name_cn like '%" + sqlKeyword + "%' || name_en like '%" + sqlKeyword + "%' || name_alias like '%" + sqlKeyword + "%'";
 
                 MySqlDataReader myRead = MySqlHelper.ExecuteReader(MySqlHelper.Conn, CommandType.Text, sqlStr, null);
 
                 if (myRead.Read())
                 {
-                    //MessageBox.Show(myRead["name_cn"].ToString());
-                    // string str = "<invoke name='ShowSearchResultData' returntype='xml'><arguments> <string>Helloworld</string> </arguments></invoke>";
                     string str = EncodeXML("ShowSearchResultData", myRead["name_cn"].ToString(), myRead["name_latin"].ToString(), myRead["name_en"].ToString(), myRead["name_alias"].ToString()
                                  , myRead["cites_phylum"].ToString(), myRead["cites_class"].ToString(), myRead["cites_order"].ToString(), myRead["cites_family"].ToString(),
-                                 myRead["information"].ToString(), myRead["cites_level"].ToString(), myRead["country_level"].ToString());
+                                 myRead["information"].ToString(), myRead["cites_level"].ToString(), myRead["country_level"].ToString(), myRead["is_animal"].ToString());
                     axShockwaveFlash1.CallFunction(str);
                 }
                 myRead.Close();
@@ -200,7 +223,7 @@ namespace CitesApp
             {
                 //显示搜索到的记录
                 string sqlKeyword = textBox1.Text;
-                string str2 = EncodeXMLNameCn("SearchQuestion", sqlKeyword);
+                string str2 = EncodeXMLOne("SearchQuestion", sqlKeyword);
                 axShockwaveFlash1.CallFunction(str2);
             }
             
@@ -208,7 +231,7 @@ namespace CitesApp
 
         private string EncodeXML(string funName,string name_cn,string name_latin,string name_en,string name_alias
 							 ,string _phylum,string _class,string _order,string _family,
-							 string _information,string _cites_level,string _country_level)
+							 string _information,string _cites_level,string _country_level,string is_animal)
         {
 
             StringBuilder sb = new StringBuilder();
@@ -281,6 +304,11 @@ namespace CitesApp
             xw.WriteString(_country_level);
             xw.WriteEndElement();
 
+            //--------is_animal---------------------
+            xw.WriteStartElement("string");
+            xw.WriteString(is_animal);
+            xw.WriteEndElement();
+
             xw.WriteEndElement();
 
             xw.WriteEndElement();
@@ -295,7 +323,7 @@ namespace CitesApp
 
         }
 
-        private string EncodeXMLNameCn(string funName, string name_cn)
+        private string EncodeXMLNameCn(string funName, string name_cn, string name_latin)
         {
 
             StringBuilder sb = new StringBuilder();
@@ -317,6 +345,52 @@ namespace CitesApp
             //---------name_cn-----------------------
             xw.WriteStartElement("string");
             xw.WriteString(name_cn);
+            xw.WriteEndElement();
+            //---------name_cn-----------------------
+
+            //---------name_latin-----------------------
+            xw.WriteStartElement("string");
+            xw.WriteString(name_latin);
+            xw.WriteEndElement();
+            //---------name_latin-----------------------
+
+
+            xw.WriteEndElement();
+            //---------参数-----------------
+
+            xw.WriteEndElement();
+
+
+            xw.Flush();
+
+            xw.Close();
+
+            return sb.ToString();
+
+        }
+
+        private string EncodeXMLOne(string funName, string one)
+        {
+
+            StringBuilder sb = new StringBuilder();
+
+            XmlTextWriter xw = new XmlTextWriter(new StringWriter(sb));
+
+
+            xw.WriteStartElement("invoke");
+
+            xw.WriteAttributeString("name", funName);
+
+            xw.WriteAttributeString("returntype", "xml");
+
+
+
+            //---------参数-----------------
+            xw.WriteStartElement("arguments");
+
+            //---------name_cn-----------------------
+            xw.WriteStartElement("string");
+            xw.WriteString(one);
             xw.WriteEndElement();
             //---------name_cn-----------------------
 
