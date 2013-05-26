@@ -108,18 +108,25 @@ namespace CitesApp
                  dataGridView1.Visible = true;
                  dataGridView1.DataSource = MySqlHelper.GetDataSet(MySqlHelper.Conn, CommandType.Text, sqlStr, null).Tables[0].DefaultView;
 
-                 dataGridView1.Columns[0].HeaderCell.Value = "商品编号";
-                 dataGridView1.Columns[1].HeaderCell.Value = "商品名称";
-                 dataGridView1.Columns[2].HeaderCell.Value = "监管条件";
-                 dataGridView1.Columns[3].HeaderCell.Value = "说明";
+                 dataGridView1.ColumnHeadersHeight = 46;
 
-                 dataGridView1.Columns[0].Width = 100;
-                 dataGridView1.Columns[1].Width = 250;
-                 dataGridView1.Columns[2].Width = 100;
-                 dataGridView1.Columns[3].Width = 250;
+                 dataGridView1.Columns["ProductID"].HeaderCell.Value = "商品编号";
+                 dataGridView1.Columns["ProductName"].HeaderCell.Value = "商品名称";
+                 dataGridView1.Columns["ProductCondition"].HeaderCell.Value = "监管条件";
+                 dataGridView1.Columns["ProductDescription"].HeaderCell.Value = "说明";
 
-                 dataGridView1.Columns[4].Visible = false;
-                 dataGridView1.Columns[5].Visible = false;
+                 dataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(153, 102, 102);
+                 dataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.FromArgb(255, 255, 255);
+
+
+
+                 dataGridView1.Columns["ProductID"].Width = 125;
+                 dataGridView1.Columns["ProductName"].Width = 225;
+                 dataGridView1.Columns["ProductCondition"].Width = 125;
+                 dataGridView1.Columns["ProductDescription"].Width = 225;
+
+                 dataGridView1.Columns["id"].Visible = false;
+                 dataGridView1.Columns["ProductTable"].Visible = false;
              }
              if (e.command == "b5_GridView1_show")
                  dataGridView1.Visible = true;
@@ -169,7 +176,7 @@ namespace CitesApp
                 if (ds.Tables[0].Rows.Count == 1)
                 {
                     string name_cn = ds.Tables[0].Rows[0]["name_cn"].ToString();
-                    string name_latin = ds.Tables[0].Rows[0]["name_latin"].ToString();
+                    string name_latin = ds.Tables[0].Rows[0]["name_latin"].ToString().Trim();
                     string name_en = ds.Tables[0].Rows[0]["name_en"].ToString();
                     string name_alias = ds.Tables[0].Rows[0]["name_alias"].ToString();
 
@@ -226,6 +233,9 @@ namespace CitesApp
                 string str2 = EncodeXMLOne("SearchQuestion", sqlKeyword);
                 axShockwaveFlash1.CallFunction(str2);
             }
+
+            if (e.command == "quit")
+                Application.Exit();
             
         }
 
