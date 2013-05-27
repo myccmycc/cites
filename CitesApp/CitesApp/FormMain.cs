@@ -64,7 +64,7 @@ namespace CitesApp
                 int result1 = int.Parse(x);
                 int result2 = int.Parse(y);
                 textBox1.Visible = true;
-                //textBox1.Text = "";
+                textBox1.Text = "";
                 textBox1.Location = new Point(result1, result2);
             }
              else if (e.command == "hide_inputtext")
@@ -218,7 +218,7 @@ namespace CitesApp
 
                 if (myRead.Read())
                 {
-                    string str = EncodeXML("ShowSearchResultData", myRead["name_cn"].ToString(), myRead["name_latin"].ToString(), myRead["name_en"].ToString(), myRead["name_alias"].ToString()
+                    string str = EncodeXML("ShowSearchResultData", myRead["name_cn"].ToString(), myRead["name_latin"].ToString().Trim(), myRead["name_en"].ToString(), myRead["name_alias"].ToString()
                                  , myRead["cites_phylum"].ToString(), myRead["cites_class"].ToString(), myRead["cites_order"].ToString(), myRead["cites_family"].ToString(),
                                  myRead["information"].ToString(), myRead["cites_level"].ToString(), myRead["country_level"].ToString(), myRead["is_animal"].ToString());
                     axShockwaveFlash1.CallFunction(str);
