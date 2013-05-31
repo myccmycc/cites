@@ -83,51 +83,7 @@ namespace CitesApp
                  textBox1.Visible = true;
                  dataGridView1.Visible = true;
              }
-             if (e.command == "b5_search" || e.command == "b5_search_2")
-             {
-                 string sqlKeyword = textBox1.Text;
-                 if (sqlKeyword == "")
-                     return;
-                 //1.物种信息显示
-                 string sqlStr1 = "select * from cites_table where name_latin like '%" + sqlKeyword + "%' || name_cn like '%" + sqlKeyword + "%' || name_en like '%" + sqlKeyword + "%' || name_alias like '%" + sqlKeyword + "%'";
 
-                 MySqlDataReader myRead = MySqlHelper.ExecuteReader(MySqlHelper.Conn, CommandType.Text, sqlStr1, null);
-
-                 if (myRead.Read())
-                 {
-                     //显示搜索到的记录
-                     string str = EncodeXMLB5("ReSearchHSCode", myRead["name_cn"].ToString(), myRead["name_latin"].ToString(), myRead["name_en"].ToString(), myRead["name_alias"].ToString(),
-                                 myRead["cites_level"].ToString(), myRead["country_level"].ToString(), myRead["product_table"].ToString());
-                     axShockwaveFlash1.CallFunction(str);
-                 }
-                 myRead.Close();
-
-                 //2.hs编码数据
-                 string sqlStr = "select * from cites_productid  where ProductTable in ( select product_table from cites_table where  name_latin like '%" + sqlKeyword + "%' || name_cn like '%" + sqlKeyword + "%' || name_en like '%" + sqlKeyword + "%' || name_alias like '%" + sqlKeyword + "%')";
-
-                 dataGridView1.Visible = true;
-                 dataGridView1.DataSource = MySqlHelper.GetDataSet(MySqlHelper.Conn, CommandType.Text, sqlStr, null).Tables[0].DefaultView;
-
-                 dataGridView1.ColumnHeadersHeight = 46;
-
-                 dataGridView1.Columns["ProductID"].HeaderCell.Value = "商品编号";
-                 dataGridView1.Columns["ProductName"].HeaderCell.Value = "商品名称";
-                 dataGridView1.Columns["ProductCondition"].HeaderCell.Value = "监管条件";
-                 dataGridView1.Columns["ProductDescription"].HeaderCell.Value = "说明";
-
-                 dataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(153, 102, 102);
-                 dataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.FromArgb(255, 255, 255);
-
-
-
-                 dataGridView1.Columns["ProductID"].Width = 125;
-                 dataGridView1.Columns["ProductName"].Width = 225;
-                 dataGridView1.Columns["ProductCondition"].Width = 125;
-                 dataGridView1.Columns["ProductDescription"].Width = 225;
-
-                 dataGridView1.Columns["id"].Visible = false;
-                 dataGridView1.Columns["ProductTable"].Visible = false;
-             }
              if (e.command == "b5_GridView1_show")
                  dataGridView1.Visible = true;
              if (e.command == "b5_GridView1_hide")
@@ -167,9 +123,15 @@ namespace CitesApp
 #endif
 
             }
+
+
+
+            //--------------物种查询---------------------------------
             if (e.command == "b3_search_name")
             {
                 string sqlKeyword = textBox1.Text;
+                if (sqlKeyword == "")
+                    return;
                 string sqlStr = "select * from cites_animal where name_latin like '%" + sqlKeyword + "%' || name_cn like '%" + sqlKeyword + "%' || name_en like '%" + sqlKeyword + "%' || name_alias like '%"+ sqlKeyword + "%'";
 
                 DataSet ds= MySqlHelper.GetDataSet(MySqlHelper.Conn, CommandType.Text, sqlStr, null);
@@ -208,10 +170,12 @@ namespace CitesApp
                 }
 
             }
-
+            //--------------物种查询---------------------------------
             if (e.command == "b3_search")
             {
                 string sqlKeyword = e.args.Trim();
+                if (sqlKeyword == "")
+                    return;
                 string sqlStr = "select * from cites_animal where name_latin like '%" + sqlKeyword + "%' || name_cn like '%" + sqlKeyword + "%' || name_en like '%" + sqlKeyword + "%' || name_alias like '%" + sqlKeyword + "%'";
 
                 MySqlDataReader myRead = MySqlHelper.ExecuteReader(MySqlHelper.Conn, CommandType.Text, sqlStr, null);
@@ -226,6 +190,63 @@ namespace CitesApp
                 myRead.Close();
             }
 
+            //--------------HS编码查询------------------------------------
+            if (e.command == "b5_search" || e.command == "b5_search_2")
+            {
+                string sqlKeyword = textBox1.Text;
+                if (sqlKeyword == "")
+                    return;
+                //1.物种信息显示
+                string sqlStr1 = "select * from cites_table where name_latin like '%" + sqlKeyword + "%' || name_cn like '%" + sqlKeyword + "%' || name_en like '%" + sqlKeyword + "%' || name_alias like '%" + sqlKeyword + "%'";
+
+                MySqlDataReader myRead = MySqlHelper.ExecuteReader(MySqlHelper.Conn, CommandType.Text, sqlStr1, null);
+
+                if (myRead.Read())
+                {
+                    //显示搜索到的记录
+                    string str = EncodeXMLB5("ReSearchHSCode", myRead["name_cn"].ToString(), myRead["name_latin"].ToString(), myRead["name_en"].ToString(), myRead["name_alias"].ToString(),
+                                myRead["cites_level"].ToString(), myRead["country_level"].ToString(), myRead["product_table"].ToString());
+                    axShockwaveFlash1.CallFunction(str);
+                }
+                myRead.Close();
+
+                //2.hs编码数据
+                string sqlStr = "select * from cites_productid  where ProductTable in ( select product_table from cites_table where  name_latin like '%" + sqlKeyword + "%' || name_cn like '%" + sqlKeyword + "%' || name_en like '%" + sqlKeyword + "%' || name_alias like '%" + sqlKeyword + "%')";
+
+                dataGridView1.Visible = true;
+                dataGridView1.DataSource = MySqlHelper.GetDataSet(MySqlHelper.Conn, CommandType.Text, sqlStr, null).Tables[0].DefaultView;
+
+                dataGridView1.ColumnHeadersHeight = 46;
+
+                dataGridView1.Columns["ProductID"].HeaderCell.Value = "商品编号";
+                dataGridView1.Columns["ProductName"].HeaderCell.Value = "商品名称";
+                dataGridView1.Columns["ProductCondition"].HeaderCell.Value = "监管条件";
+                dataGridView1.Columns["ProductDescription"].HeaderCell.Value = "说明";
+
+                dataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(153, 102, 102);
+                dataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.FromArgb(255, 255, 255);
+
+
+
+                dataGridView1.Columns["ProductID"].Width = 125;
+                dataGridView1.Columns["ProductName"].Width = 225;
+                dataGridView1.Columns["ProductCondition"].Width = 125;
+                dataGridView1.Columns["ProductDescription"].Width = 225;
+
+                dataGridView1.Columns["id"].Visible = false;
+                dataGridView1.Columns["ProductTable"].Visible = false;
+            }
+
+            //-------------------法律法规------------------------
+            if (e.command == "b6_search_law")
+            {
+                //显示搜索到的记录
+                string sqlKeyword = textBox1.Text;
+                string str2 = EncodeXMLOne("SearchLaw", sqlKeyword);
+                axShockwaveFlash1.CallFunction(str2);
+            }
+
+            //--------------------常见问题--------------------------
             if (e.command == "b7_search_question")
             {
                 //显示搜索到的记录
@@ -233,7 +254,7 @@ namespace CitesApp
                 string str2 = EncodeXMLOne("SearchQuestion", sqlKeyword);
                 axShockwaveFlash1.CallFunction(str2);
             }
-
+            //--------------------退出程序--------------------------
             if (e.command == "quit")
                 Application.Exit();
             
